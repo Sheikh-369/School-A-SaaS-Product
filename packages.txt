@@ -10,10 +10,3 @@ npx tsc --init
 npm i sequelize-typescript
 npm i mysql2
 npm i sequelize
-
-git init
-git add .
-git commit -m "first commit"
-git branch -M master
-git remote add origin https://github.com/Sheikh-369/SaaS-Product-A-School.git
-git push -u origin master
