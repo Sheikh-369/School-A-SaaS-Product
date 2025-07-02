@@ -35,7 +35,8 @@ const createSchool=async(req:Request,res:Response)=>{
            })
 
            res.status(200).json({
-            message:"School Created Succesfully!"
+            message:"School Created Succesfully!",
+            schoolNumber
            })
 }
 
