@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import sequelize from "../../database/connection";
 import randomNumber from "../../services/randomNumberGenerator";
 import { QueryTypes } from "sequelize";
 import User from "../../database/models/userModel";
 import IExtendedRequest from "../../services/type";
 
-const createSchool=async(req:IExtendedRequest,res:Response)=>{
+const createSchool=async(req:IExtendedRequest,res:Response,next:NextFunction)=>{
     const {schoolName,schoolPhoneNumber,schoolEmail,schoolAddress}=req.body
     const schoolVatNumber=req.body.schoolVatNumber || null
     const schoolPanNumber=req.body.schoolPanNumber || null
@@ -61,11 +61,53 @@ const createSchool=async(req:IExtendedRequest,res:Response)=>{
             if(req.user){
                 req.user.currentSchoolNumber=schoolNumber
             }
-
-           res.status(200).json({
-            message:"School Created Succesfully!",
-            schoolNumber
-           })
+            next()
 }
 
-export default createSchool
+const createTeacherTable=async(req:IExtendedRequest,res:Response,next:NextFunction)=>{
+    const schoolNumber=req.user?.currentSchoolNumber
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS teacher_${schoolNumber}(
+        id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+        teacherName VARCHAR(225) NOT NULL,
+        teacherPhoneNumber VARCHAR(225) NOT NULL UNIQUE,
+        teacherEmail VARCHAR(225) NOT NULL UNIQUE,
+        teacherAddress VARCHAR(225) NOT NULL,
+        teacherSalary VARCHAR(225),
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`)
+
+        next()
+}
+
+const createStudentTable=async(req:IExtendedRequest,res:Response,next:NextFunction)=>{
+    const schoolNumber=req.user?.currentSchoolNumber
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS student_${schoolNumber}(
+        id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+        studentName VARCHAR(225) NOT NULL,
+        studentPhoneNumber VARCHAR(225) NOT NULL,
+        studentEmail VARCHAR(225) NOT NULL,
+        studentAddress VARCHAR(225) NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`)
+        next()
+}
+
+const createCourseTable=async(req:IExtendedRequest,res:Response)=>{
+    const schoolNumber=req.user?.currentSchoolNumber
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS course_${schoolNumber}(
+        id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+        courseName VARCHAR(225) NOT NULL,
+        courseFee VARCHAR(225) NOT NULL,
+        courseDescription TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`)
+        res.status(200).json({
+            message:"School Created Succesfully!",
+            schoolNumber
+           })        
+}
+
+export {createSchool,createTeacherTable,createStudentTable,createCourseTable}

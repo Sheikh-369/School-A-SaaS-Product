@@ -1,9 +1,9 @@
 import express, { Router } from "express"
-import createSchool from "../../controllers/school/schoolController"
 import isLoggedIn from "../../middleware/middleware"
+import { createCourseTable, createSchool, createStudentTable, createTeacherTable } from "../../controllers/school/schoolController"
 
 const router:Router=express.Router()
 
-router.route("/school").post(isLoggedIn,createSchool)
+router.route("/school").post(isLoggedIn,createSchool,createTeacherTable,createStudentTable,createCourseTable)
 
 export default router
