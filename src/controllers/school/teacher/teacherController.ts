@@ -32,4 +32,43 @@ const createTeacher=async(req:IExtendedRequest,res:Response)=>{
 
 }
 
-export default createTeacher
+
+const fetchAllTeacher=async(req:IExtendedRequest,res:Response)=>{
+    const schoolNumber=req.user?.currentSchoolNumber
+    const teachers=await sequelize.query(`SELECT * FROM teacher_${schoolNumber}`,{
+        type:QueryTypes.SELECT
+    })
+    res.status(200).json({
+        message:"All teachers fetched Successfully!",
+        data:teachers,
+        schoolNumber
+    })
+}
+
+const fetchSingleTeacher=async(req:IExtendedRequest,res:Response)=>{
+    const schoolNumber=req.user?.currentSchoolNumber
+    const teacherId=req.params.id
+    const teacher=await sequelize.query(`SELECT * FROM teacher_${schoolNumber} WHERE id=?`,{
+        type:QueryTypes.SELECT,
+        replacements:[teacherId]
+    })
+    res.status(200).json({
+        message:"Single Teacher Fetched Successfully!",
+        data:teacher,
+        schoolNumber
+    })
+}
+
+const deleteTeacher=async(req:IExtendedRequest,res:Response)=>{
+    const schoolNumber=req.user?.currentSchoolNumber
+    const teacherId=req.params.id
+    await sequelize.query(`DELETE FROM teacher_${schoolNumber} WHERE id=?`,{
+        type:QueryTypes.DELETE,
+        replacements:[teacherId]
+    })
+    res.status(200).json({
+        message:"Teacher Deleted Successfully!"
+    })
+}
+
+export {createTeacher,fetchAllTeacher,fetchSingleTeacher,deleteTeacher}
