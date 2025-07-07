@@ -71,4 +71,26 @@ const deleteTeacher=async(req:IExtendedRequest,res:Response)=>{
     })
 }
 
-export {createTeacher,fetchAllTeacher,fetchSingleTeacher,deleteTeacher}
+const updateTeacher=async(req:IExtendedRequest,res:Response)=>{
+    const schoolNumber=req.user?.currentSchoolNumber
+    const teacherId=req.params.id
+    const {teacherName,teacherPhoneNumber,teacherEmail,teacherAddress,teacherSalary}=req.body
+
+    if(!teacherName || !teacherPhoneNumber || !teacherEmail || !teacherAddress || !teacherSalary){
+        res.status(400).json({
+            message:"Please fill all the fields!"
+        })
+        return
+    }
+
+    await sequelize.query(`UPDATE teacher_${schoolNumber} SET teacherName=?, teacherPhoneNumber=?,teacherEmail=?,teacherAddress=?,teacherSalary=? WHERE id=?`,{
+        type:QueryTypes.UPDATE,
+        replacements:[teacherName,teacherPhoneNumber,teacherEmail,teacherAddress,teacherSalary,teacherId]
+    })
+    res.status(200).json({
+        message:"Teacher Updated Successfully!",
+        schoolNumber
+    })
+}
+
+export {createTeacher,fetchAllTeacher,fetchSingleTeacher,deleteTeacher,updateTeacher}

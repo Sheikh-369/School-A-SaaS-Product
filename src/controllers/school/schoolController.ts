@@ -4,6 +4,7 @@ import randomNumber from "../../services/randomNumberGenerator";
 import { QueryTypes } from "sequelize";
 import User from "../../database/models/userModel";
 import IExtendedRequest from "../../services/type";
+import categories from "../../services/seed";
 
 const createSchool=async(req:IExtendedRequest,res:Response,next:NextFunction)=>{
     const {schoolName,schoolPhoneNumber,schoolEmail,schoolAddress}=req.body
@@ -94,6 +95,25 @@ const createStudentTable=async(req:IExtendedRequest,res:Response,next:NextFuncti
         next()
 }
 
+const createCategoryTable=async(req:IExtendedRequest,res:Response,next:NextFunction)=>{
+    const schoolNumber=req.user?.currentSchoolNumber
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS category_${schoolNumber}(
+        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        categoryName VARCHAR(50) NOT NULL,
+        categoryDescription TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`)
+
+        categories.forEach(async(category)=>{
+            await sequelize.query(`INSERT INTO category_${schoolNumber}(categoryName,categoryDescription) VALUES(?,?)`,{
+                type:QueryTypes.INSERT,
+                replacements:[category.categoryName,category.categoryDescription]
+            })
+        })
+        next()
+}
+
 const createCourseTable=async(req:IExtendedRequest,res:Response)=>{
     const schoolNumber=req.user?.currentSchoolNumber
     await sequelize.query(`CREATE TABLE IF NOT EXISTS course_${schoolNumber}(
@@ -110,4 +130,4 @@ const createCourseTable=async(req:IExtendedRequest,res:Response)=>{
            })        
 }
 
-export {createSchool,createTeacherTable,createStudentTable,createCourseTable}
+export {createSchool,createTeacherTable,createStudentTable,createCategoryTable,createCourseTable}
