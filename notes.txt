@@ -10,3 +10,7 @@ npx tsc --init
 npm i sequelize-typescript
 npm i mysql2
 npm i sequelize
+
+try catch-should be wrapped in every asynchronous function
+
+wrapper-no need to wrap in each asynchronous function
