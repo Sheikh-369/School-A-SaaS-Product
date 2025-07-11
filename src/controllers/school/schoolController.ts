@@ -121,6 +121,7 @@ const createCourseTable=async(req:IExtendedRequest,res:Response)=>{
         courseName VARCHAR(225) NOT NULL,
         courseFee VARCHAR(225) NOT NULL,
         courseDescription TEXT,
+        courseThumbnail VARCHAR(225),
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )`)

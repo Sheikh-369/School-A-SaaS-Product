@@ -14,3 +14,19 @@ npm i sequelize
 try catch-should be wrapped in every asynchronous function
 
 wrapper-no need to wrap in each asynchronous function
+
+locally----
+cloud---
+
+cloudinary.com-->sign upload
+login
+cloudinary_name
+cloudinary_api
+cloudinary_secret
+
+File Handling Process(Concept/Flow)
+1.services-->cloudinaryConfig.ts
+2.middleware-->multerUpload
+3.controllers-->kun file ma image chainx(eg courseController.ts for courseThumbnail)
+4.table ma field pani banaune(schoolController.ts ma)
+5. courseController ko route ma upload lai import grera routing ma rakhne
