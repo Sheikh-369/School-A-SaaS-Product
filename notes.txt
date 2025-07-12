@@ -30,3 +30,13 @@ File Handling Process(Concept/Flow)
 3.controllers-->kun file ma image chainx(eg courseController.ts for courseThumbnail)
 4.table ma field pani banaune(schoolController.ts ma)
 5. courseController ko route ma upload lai import grera routing ma rakhne
+
+
+Email Sending Flow:
+1. generate password(include a column in teacher table + include and insert in teacherController.ts)
+
+2. generate random password for teacher(services-->generateTeacherPassword)
+
+3.nodemailer package installation
+4.nodemail configuration(sender information and receiver information are kept)
+5. just below teacher creation in teacherController and above the response, write the logic for sending email.

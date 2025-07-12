@@ -74,6 +74,7 @@ const createTeacherTable=async(req:IExtendedRequest,res:Response,next:NextFuncti
         teacherEmail VARCHAR(225) NOT NULL UNIQUE,
         teacherAddress VARCHAR(225) NOT NULL,
         teacherSalary VARCHAR(225),
+        teacherPassword VARCHAR(225),
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )`)

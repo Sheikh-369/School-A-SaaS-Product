@@ -4,6 +4,8 @@ import { Response } from "express";
 import IExtendedRequest from "../../../services/type";
 import sequelize from "../../../database/connection";
 import { QueryTypes } from "sequelize";
+import randomTeacherPassword from "../../../services/randomTeacherPassword";
+import sendMail from "../../../services/sendMail";
 
 
 
@@ -21,10 +23,66 @@ const createTeacher=async(req:IExtendedRequest,res:Response)=>{
         return
     }
 
-    await sequelize.query(`INSERT INTO teacher_${schoolNumber}(teacherName,teacherPhoneNumber,teacherEmail,teacherAddress,teacherSalary) VALUES(?,?,?,?,?)`,{
+    const data=randomTeacherPassword(teacherName)
+    await sequelize.query(`INSERT INTO teacher_${schoolNumber}(teacherName,teacherPhoneNumber,teacherEmail,teacherAddress,teacherSalary,teacherPassword) VALUES(?,?,?,?,?,?)`,{
         type:QueryTypes.INSERT,
-        replacements:[teacherName,teacherPhoneNumber,teacherEmail,teacherAddress,teacherSalary]
+        replacements:[teacherName,teacherPhoneNumber,teacherEmail,teacherAddress,teacherSalary,data.hashedVersion]
     })
+
+    //sending  mail to teacher
+    const mailInformation={
+        to:teacherEmail,
+        subject:"You are Welcome to our School.",
+        html:`<!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f5f7fa;
+                        padding: 20px;
+                        margin: 0;
+                    }
+                    .container {
+                        max-width: 600px;
+                        background-color: #ffffff;
+                        margin: auto;
+                        padding: 30px;
+                        border-radius: 10px;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+                    }
+                    h2 {
+                        color: #004aad;
+                    }
+                    .info {
+                        background-color: #f0f4ff;
+                        padding: 15px;
+                        border-radius: 8px;
+                        margin-top: 20px;
+                        font-size: 16px;
+                    }
+                    .info p {
+                        margin: 10px 0;
+                    }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                    <h2>Welcome, ${teacherName}!</h2>
+                    <p>Below are your account details to access the school system:</p>
+                    <div class="info">
+                        <p><strong>School Number:</strong> ${schoolNumber}</p>
+                        <p><strong>Password:</strong> ${data.plainVersion}</p>
+                    </div>
+                    <p>Please keep this information confidential. You may be prompted to change your password after your first login.</p>
+                    </div>
+                </body>
+                </html>`
+    }
+
+    await sendMail(mailInformation)
+
+
     res.status(200).json({
         message:"Teacher Created Successfully!",
         schoolNumber
