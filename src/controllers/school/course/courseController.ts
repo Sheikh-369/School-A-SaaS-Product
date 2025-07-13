@@ -5,7 +5,7 @@ import { QueryTypes } from "sequelize";
 
 const createCourse=async(req:IExtendedRequest,res:Response)=>{
     const schoolNumber=req.user?.currentSchoolNumber
-    const {courseName,courseFee,courseDescription}=req.body
+    const {courseName,courseFee,courseDescription,teacherId,categoryId}=req.body
 
     //for files
     const courseThumbnail=req.file?req.file.path:null
@@ -17,9 +17,9 @@ const createCourse=async(req:IExtendedRequest,res:Response)=>{
         return
     }
 
-    await sequelize.query(`INSERT INTO course_${schoolNumber} (courseName,courseFee,courseDescription,courseThumbnail) VALUES(?,?,?,?)`,{
+    await sequelize.query(`INSERT INTO course_${schoolNumber} (courseName,courseFee,courseDescription,courseThumbnail,teacherId,categoryId) VALUES(?,?,?,?,?,?)`,{
         type:QueryTypes.INSERT,
-        replacements:[courseName,courseFee,courseDescription,courseThumbnail]
+        replacements:[courseName,courseFee,courseDescription,courseThumbnail,teacherId || null,categoryId || null]
     })
     res.status(200).json({
         message:"Course Created Successfully!",
@@ -29,7 +29,7 @@ const createCourse=async(req:IExtendedRequest,res:Response)=>{
 
 const fetchAllCourses=async(req:IExtendedRequest,res:Response)=>{
     const schoolNumber=req.user?.currentSchoolNumber
-    const courses=await sequelize.query(`SELECT * FROM course_${schoolNumber}`,{
+    const courses=await sequelize.query(`SELECT * FROM course_${schoolNumber} JOIN category_${schoolNumber} ON course_${schoolNumber}.categoryId=category_${schoolNumber}.id`,{
         type:QueryTypes.SELECT
     })
     res.status(200).json({
@@ -68,7 +68,10 @@ const deleteCourse=async(req:IExtendedRequest,res:Response)=>{
 const updateCourse=async(req:IExtendedRequest,res:Response)=>{
     const schoolNumber=req.user?.currentSchoolNumber
     const courseId=req.params.id
-    const {courseName,courseFee,courseDescription}=req.body
+    const {courseName,courseFee,courseDescription,teacherId,categoryId}=req.body
+
+    const courseThumbnail=req.file?req.file.path:null 
+
     if(!courseName || !courseFee || !courseDescription){
         res.status(400).json({
             message:"Please fill all the fields!"
@@ -76,9 +79,9 @@ const updateCourse=async(req:IExtendedRequest,res:Response)=>{
         return
     }
 
-    await sequelize.query(`UPDATE course_${schoolNumber} SET courseName=?,courseFee=?,courseDescription=? WHERE id=?`,{
+    await sequelize.query(`UPDATE course_${schoolNumber} SET courseName=?,courseFee=?,courseDescription=?, courseThumbnail=?,teacherId=?,categoryId WHERE id=?`,{
         type:QueryTypes.UPDATE,
-        replacements:[courseName,courseFee,courseDescription,courseId]
+        replacements:[courseName,courseFee,courseDescription,courseThumbnail || null,teacherId || null,categoryId || null,courseId]
     })
     res.status(200).json({
         message:"Course Updated Successfully!",

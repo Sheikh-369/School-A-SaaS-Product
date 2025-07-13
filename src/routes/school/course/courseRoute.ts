@@ -10,6 +10,6 @@ router.route("/course").post(isLoggedIn,upload.single("courseThumbnail"),asyncEr
 router.route("/course").get(isLoggedIn,asyncErrorHandler(fetchAllCourses))
 router.route("/course/:id").get(isLoggedIn,asyncErrorHandler(fetchSingleCourse))
 router.route("/course/:id").delete(isLoggedIn,asyncErrorHandler(deleteCourse))
-router.route("/course/:id").patch(isLoggedIn,asyncErrorHandler(updateCourse))
+router.route("/course/:id").patch(isLoggedIn,upload.single("courseThumbnail"),asyncErrorHandler(updateCourse))
 
 export default router
