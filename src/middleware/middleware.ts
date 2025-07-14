@@ -11,7 +11,7 @@ const isLoggedIn=async(req:IExtendedRequest,res:Response,next:NextFunction)=>{
         })
         return
     }
-    jwt.verify(token,"process.env.JWT_SECRET",async(error,success:any)=>{
+    jwt.verify(token,process.env.JWT_SECRET!,async(error,success:any)=>{
         if(error){
             res.status(404).json({
                 message:"Invalid Token!"

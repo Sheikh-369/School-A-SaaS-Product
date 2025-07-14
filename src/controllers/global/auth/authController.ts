@@ -44,7 +44,7 @@ const userLogin=async (req:Request,res:Response)=>{
     }else{
        const isPasswordMatch=bcrypt.compareSync(password,data[0].password)
        if(isPasswordMatch){
-        const token=jwt.sign({id:data[0].id},"process.env.JWT_SECRET",{
+        const token=jwt.sign({id:data[0].id},process.env.JWT_SECRET!,{
             expiresIn:"30d"
         })
         res.status(200).json({
