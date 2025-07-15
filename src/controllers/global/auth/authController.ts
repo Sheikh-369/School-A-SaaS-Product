@@ -12,6 +12,16 @@ const userRegister=async(req:Request,res:Response)=>{
         return
     }
 
+    const data=await User.findAll({
+        where:{
+            email:email
+        }
+    })
+    if(data.length>0){
+        res.status(404).json({
+            message:"Email already registered!"
+        })
+    }
     await User.create({
         userName:userName,
         email:email,
