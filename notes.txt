@@ -40,3 +40,15 @@ Email Sending Flow:
 3.nodemailer package installation
 4.nodemail configuration(sender information and receiver information are kept)
 5. just below teacher creation in teacherController and above the response, write the logic for sending email.
+
+
+const otp = generateOTP(); // your OTP logic
+
+const emailHTML = `
+  <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; background: #fff; padding: 30px; border-radius: 6px; text-align: center;">
+    <h2 style="color: #333;">Password Reset OTP</h2>
+    <p style="color: #555;">Use the OTP below to reset your password:</p>
+    <p style="font-size: 28px; font-weight: bold; color: #2d89ef; margin: 20px 0;">${otp}</p>
+    <p style="color: #999;">This code is valid for 10 minutes.</p>
+  </div>
+`;
