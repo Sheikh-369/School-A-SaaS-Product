@@ -105,10 +105,10 @@ const forgotPassword=async(req:Request,res:Response)=>{
         <p style="color: #999;">This code is valid for 10 minutes.</p>
     </div>`
     })
-    //inserting data into user table
+    // inserting data into user table
     user.OTP=OTP.toString()
-    user.OTPGeneratedTime=new Date()
-    user.OTPExpiry=new Date(Date.now() + 600_000)
+    user.OTPGeneratedTime=new Date().toLocaleString()
+    user.OTPExpiry=new Date(Date.now() + 600_000).toLocaleString()
     await user.save()
 
     res.status(200).json({
@@ -116,4 +116,66 @@ const forgotPassword=async(req:Request,res:Response)=>{
     })
 }
 
-export {userRegister,userLogin,forgotPassword}
+const resetPassword=async (req:Request,res:Response)=>{
+    const {OTP,userEmail,newPassword,confirmNewPassword}=req.body
+
+    if (!OTP || !userEmail || !newPassword || !confirmNewPassword){
+        res.status(400).json({
+            message:"Please fill all the fields!"
+        })
+        return
+    }
+
+    //finds the entered email
+    const user=await User.findOne({
+        where:{userEmail:userEmail}
+    })
+    //checks the eneterd email
+    if(!user){
+        res.status(400).json({
+            message:"Invalid Email or OTP!"
+        })
+        return
+    }
+
+    //OTP expiration
+    if(!user.OTP || !user.OTPExpiry || new Date() > new Date(user.OTPExpiry)){
+        res.status(400).json({
+            message:"OTP has expired. Please request new OTP!"
+        })
+        return
+    }
+
+    //OTP validation
+    if(user.OTP !==OTP.toString()){
+        res.status(400).json({
+            message:"Invalid OTP!"
+        })
+        return
+    }
+
+    //newpasword confirmation
+    if(confirmNewPassword !==newPassword){
+        res.status(400).json({
+            message:"New Password and Confirm New Password did not match!"
+        })
+        return
+    }
+
+    const hashedPassword=bcrypt.hashSync(newPassword,12)
+    user.userPassword=hashedPassword
+
+    user.OTP=null,
+    user.OTPGeneratedTime=null,
+    user.OTPExpiry=null
+
+    await user.save()
+
+    res.status(200).json({
+        messsage:"Password Changed Successfully!"
+    })
+
+
+}
+
+export {userRegister,userLogin,forgotPassword,resetPassword}

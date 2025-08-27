@@ -48,12 +48,12 @@ class User extends Model{
     declare OTP:string | null
 
     @Column({
-        type:DataType.DATE
+        type:DataType.STRING
     })
     declare OTPGeneratedTime:Date | null | string
 
     @Column({
-        type:DataType.DATE
+        type:DataType.STRING
     })
     declare OTPExpiry:Date | null | string
 }
