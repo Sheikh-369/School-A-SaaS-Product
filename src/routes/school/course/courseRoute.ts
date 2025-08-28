@@ -1,8 +1,8 @@
 import express, { Router } from "express"
 import { createCourse, deleteCourse, fetchAllCourses, fetchSingleCourse, updateCourse } from "../../../controllers/school/course/courseController"
-import isLoggedIn from "../../../middleware/middleware"
 import asyncErrorHandler from "../../../services/asyncErrorHandler"
 import upload from "../../../middleware/multerUpload"
+import { isLoggedIn } from "../../../middleware/middleware"
 
 const router:Router=express.Router()
 

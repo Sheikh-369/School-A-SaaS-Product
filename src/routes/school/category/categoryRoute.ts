@@ -1,7 +1,7 @@
 import express, { Router } from "express"
-import isLoggedIn from "../../../middleware/middleware"
 import asyncErrorHandler from "../../../services/asyncErrorHandler"
 import { createCategory, deleteCategory, fetchAllCategories, fetchSingleCategory, updateCategory } from "../../../controllers/school/category/categoryController"
+import { isLoggedIn } from "../../../middleware/middleware"
 
 const router:Router=express.Router()
 

@@ -6,6 +6,7 @@ import sequelize from "../../../database/connection";
 import { QueryTypes } from "sequelize";
 import randomTeacherPassword from "../../../services/randomTeacherPassword";
 import sendMail from "../../../services/sendMail";
+import User from "../../../database/models/userModel";
 
 
 
@@ -22,8 +23,23 @@ const createTeacher=async(req:IExtendedRequest,res:Response)=>{
         })
         return
     }
+    //comparing teacher email with user email
+    const existingUser=await User.findAll({
+        where:{userEmail:teacherEmail}
+    })
 
     const data=randomTeacherPassword(teacherName)
+
+    if(existingUser.length===0){
+        await User.create({
+            userName:teacherName,
+            userEmail:teacherEmail,
+            userPassword:data.hashedVersion,
+            role:"teacher",
+            currentSchoolNumber:schoolNumber
+        })
+    }
+
     await sequelize.query(`INSERT INTO teacher_${schoolNumber}(teacherName,teacherPhoneNumber,teacherEmail,teacherAddress,teacherSalary,teacherPassword) VALUES(?,?,?,?,?,?)`,{
         type:QueryTypes.INSERT,
         replacements:[teacherName,teacherPhoneNumber,teacherEmail,teacherAddress,teacherSalary,data.hashedVersion]
