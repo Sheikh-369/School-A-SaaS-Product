@@ -1,4 +1,5 @@
 import express from "express"
+import cors from "cors"
 
 const app=express()
 import authRoute from "./routes/global/auth/authRoute"
@@ -10,6 +11,9 @@ import categoryRoute from "./routes/school/category/categoryRoute"
 import teacherLoginRoute from "./routes/teacher/teacherLoginRoute"
 
 app.use(express.json())
+app.use(cors({
+    origin:"http://localhost:3000"
+}))
 
 app.use("/teaching",authRoute)
 app.use("/teaching",schoolRoute)
